@@ -181,9 +181,11 @@ namespace KeePass.Util
 			if(strString.Length == 0) return;
 
 			if(kMod != Keys.None)
-				NativeMethods.RunXDoTool(@"type '" + strString + @"'");
+				foreach(char c in strString)
+					NativeMethods.RunXDoTool(@"key U" + ((int)c).ToString("x4"));
 			else
-				NativeMethods.RunXDoTool(@"type --clearmodifiers '" + strString + @"'");
+				foreach(char c in strString)
+					NativeMethods.RunXDoTool(@"key --clearmodifiers U" + ((int)c).ToString("x4"));
 
 			ClearModifiers(ref kMod);
 		}

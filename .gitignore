@@ -31,3 +31,5 @@ Build/KeePass
 Build/
 Build/KeePassLib_Distrib/
 Build/KeePassLibSD_Distrib/
+
+*.resources

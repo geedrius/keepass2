@@ -1,0 +1,8 @@
+geedrius_keepass.snk
+*.exe
+*.pdb
+*.dll
+*.user
+KeePass/obj/*
+KeePassLib/obj/*
+Translation/TrlUtil/obj/*

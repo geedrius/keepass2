@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System.Globalization;
 using System.Diagnostics;
 
 using KeePass.App.Configuration;
+using KeePass.Forms;
 
 using KeePassLib;
 using KeePassLib.Collections;
@@ -116,6 +117,7 @@ namespace KeePass.Util.Spr
 			}
 
 			string str = strText;
+			MainForm mf = Program.MainForm;
 
 			bool bExt = ((ctx.Flags & (SprCompileFlags.ExtActive |
 				SprCompileFlags.ExtNonActive)) != SprCompileFlags.None);
@@ -164,21 +166,25 @@ namespace KeePass.Util.Spr
 						StrUtil.EncryptString(strPwCmp), ctx);
 				}
 
+				PwGroup pg = ctx.Entry.ParentGroup;
 				if(((ctx.Flags & SprCompileFlags.Group) != SprCompileFlags.None) &&
-					(ctx.Entry.ParentGroup != null))
-				{
-					str = SprEngine.FillIfExists(str, @"{GROUP}", new ProtectedString(
-						false, ctx.Entry.ParentGroup.Name), ctx, uRecursionLevel);
-
-					str = SprEngine.FillIfExists(str, @"{GROUPPATH}", new ProtectedString(
-						false, ctx.Entry.ParentGroup.GetFullPath()), ctx, uRecursionLevel);
-				}
+					(pg != null))
+					str = FillGroupPlh(str, @"{GROUP", pg, ctx, uRecursionLevel);
 			}
 
 			if((ctx.Flags & SprCompileFlags.Paths) != SprCompileFlags.None)
+			{
+				if(mf != null)
+				{
+					PwGroup pgSel = mf.GetSelectedGroup();
+					if(pgSel != null)
+						str = FillGroupPlh(str, @"{GROUP_SEL", pgSel, ctx, uRecursionLevel);
+				}
+
 				str = SprEngine.FillIfExists(str, @"{APPDIR}", new ProtectedString(
 					false, UrlUtil.GetFileDirectory(m_strAppExePath, false, false)),
 					ctx, uRecursionLevel);
+			}
 
 			if(ctx.Database != null)
 			{
@@ -230,23 +236,7 @@ namespace KeePass.Util.Spr
 
 			if((ctx.Flags & SprCompileFlags.DateTime) != SprCompileFlags.None)
 			{
-				DateTime dtNow = DateTime.Now; // Local time
-				str = SprEngine.FillIfExists(str, @"{DT_YEAR}", new ProtectedString(
-					false, dtNow.Year.ToString("D4")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_MONTH}", new ProtectedString(
-					false, dtNow.Month.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_DAY}", new ProtectedString(
-					false, dtNow.Day.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_HOUR}", new ProtectedString(
-					false, dtNow.Hour.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_MINUTE}", new ProtectedString(
-					false, dtNow.Minute.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_SECOND}", new ProtectedString(
-					false, dtNow.Second.ToString("D2")), ctx, uRecursionLevel);
-				str = SprEngine.FillIfExists(str, @"{DT_SIMPLE}", new ProtectedString(
-					false, dtNow.ToString("yyyyMMddHHmmss")), ctx, uRecursionLevel);
-
-				dtNow = dtNow.ToUniversalTime();
+				DateTime dtNow = DateTime.UtcNow;
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_YEAR}", new ProtectedString(
 					false, dtNow.Year.ToString("D4")), ctx, uRecursionLevel);
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_MONTH}", new ProtectedString(
@@ -260,6 +250,22 @@ namespace KeePass.Util.Spr
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_SECOND}", new ProtectedString(
 					false, dtNow.Second.ToString("D2")), ctx, uRecursionLevel);
 				str = SprEngine.FillIfExists(str, @"{DT_UTC_SIMPLE}", new ProtectedString(
+					false, dtNow.ToString("yyyyMMddHHmmss")), ctx, uRecursionLevel);
+
+				dtNow = dtNow.ToLocalTime();
+				str = SprEngine.FillIfExists(str, @"{DT_YEAR}", new ProtectedString(
+					false, dtNow.Year.ToString("D4")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_MONTH}", new ProtectedString(
+					false, dtNow.Month.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_DAY}", new ProtectedString(
+					false, dtNow.Day.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_HOUR}", new ProtectedString(
+					false, dtNow.Hour.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_MINUTE}", new ProtectedString(
+					false, dtNow.Minute.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_SECOND}", new ProtectedString(
+					false, dtNow.Second.ToString("D2")), ctx, uRecursionLevel);
+				str = SprEngine.FillIfExists(str, @"{DT_SIMPLE}", new ProtectedString(
 					false, dtNow.ToString("yyyyMMddHHmmss")), ctx, uRecursionLevel);
 			}
 
@@ -650,6 +656,27 @@ namespace KeePass.Util.Spr
 		//	return (strText.IndexOfAny(m_vPlhEscapes) >= 0);
 		// }
 
+		internal static bool MightChange(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			int iBStart = str.IndexOf('{');
+			if(iBStart >= 0)
+			{
+				int iBEnd = str.LastIndexOf('}');
+				if(iBStart < iBEnd) return true;
+			}
+
+			int iPFirst = str.IndexOf('%');
+			if(iPFirst >= 0)
+			{
+				int iPLast = str.LastIndexOf('%');
+				if(iPFirst < iPLast) return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// Fast probabilistic test whether a string might be
 		/// changed when compiling with <c>SprCompileFlags.Deref</c>.
@@ -781,6 +808,30 @@ namespace KeePass.Util.Spr
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
+
+			return str;
+		}
+
+		private static string FillGroupPlh(string strData, string strPlhPrefix,
+			PwGroup pg, SprContext ctx, uint uRecursionLevel)
+		{
+			Debug.Assert(strPlhPrefix.StartsWith("{"));
+			Debug.Assert(!strPlhPrefix.EndsWith("_"));
+			Debug.Assert(!strPlhPrefix.EndsWith("}"));
+
+			string str = strData;
+
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"}",
+				new ProtectedString(false, pg.Name), ctx, uRecursionLevel);
+
+			ProtectedString psGroupPath = new ProtectedString(false, pg.GetFullPath());
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"_PATH}", psGroupPath,
+				ctx, uRecursionLevel);
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"PATH}", psGroupPath,
+				ctx, uRecursionLevel); // Obsolete; for backward compatibility
+
+			str = SprEngine.FillIfExists(str, strPlhPrefix + @"_NOTES}",
+				new ProtectedString(false, pg.Notes), ctx, uRecursionLevel);
 
 			return str;
 		}

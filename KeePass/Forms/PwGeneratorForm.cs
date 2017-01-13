@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -110,6 +110,7 @@ namespace KeePass.Forms
 			FontUtil.AssignDefaultBold(m_rbCustom);
 			FontUtil.AssignDefaultMono(m_tbPreview, true);
 
+			UIUtil.ConfigureToolTip(m_ttMain);
 			m_ttMain.SetToolTip(m_btnProfileAdd, KPRes.GenProfileSaveDesc);
 			m_ttMain.SetToolTip(m_btnProfileRemove, KPRes.GenProfileRemoveDesc);
 
@@ -538,12 +539,17 @@ namespace KeePass.Forms
 				string.IsNullOrEmpty(pwOpt.CustomAlgorithmUuid))
 				n = 0;
 
+			PwEntry peContext = new PwEntry(true, true);
+			MainForm mf = Program.MainForm;
+			PwDatabase pdContext = ((mf != null) ? mf.ActiveDatabase : null);
+
+			bool bAcceptAlways = false;
 			for(uint i = 0; i < n; ++i)
 			{
 				Application.DoEvents();
 
-				ProtectedString psNew;
-				PwGenerator.Generate(out psNew, pwOpt, null, Program.PwGeneratorPool);
+				ProtectedString psNew = PwGeneratorUtil.GenerateAcceptable(
+					pwOpt, null, peContext, pdContext, ref bAcceptAlways);
 				sbList.AppendLine(psNew.ReadString());
 				m_pbPreview.Value = (int)((100 * i) / MaxPreviewPasswords);
 			}

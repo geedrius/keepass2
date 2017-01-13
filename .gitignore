@@ -6,3 +6,5 @@ geedrius_keepass.snk
 KeePass/obj/*
 KeePassLib/obj/*
 Translation/TrlUtil/obj/*
+/Build/KeePassLib/Debug
+/.vs/KeePass/v14/*.suo

@@ -214,6 +214,9 @@ namespace KeePass.Util.XmlSerialization
 					case "UseTransactedFileWrites":
 						o.UseTransactedFileWrites = ReadBoolean(xr);
 						break;
+					case "FileTxExtra":
+						o.FileTxExtra = ReadBoolean(xr);
+						break;
 					case "UseFileLocks":
 						o.UseFileLocks = ReadBoolean(xr);
 						break;
@@ -228,6 +231,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "PluginCachePath":
 						o.PluginCachePath = ReadString(xr);
+						break;
+					case "ExpirySoonDays":
+						o.ExpirySoonDays = ReadInt32(xr);
 						break;
 					default:
 						Debug.Assert(false);
@@ -312,10 +318,10 @@ namespace KeePass.Util.XmlSerialization
 						o.Maximized = ReadBoolean(xr);
 						break;
 					case "SplitterHorizontalFrac":
-						o.SplitterHorizontalFrac = ReadSingle(xr);
+						o.SplitterHorizontalFrac = ReadDouble(xr);
 						break;
 					case "SplitterVerticalFrac":
-						o.SplitterVerticalFrac = ReadSingle(xr);
+						o.SplitterVerticalFrac = ReadDouble(xr);
 						break;
 					case "Layout":
 						o.Layout = ReadAceMainWindowLayout(xr);
@@ -325,6 +331,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "CloseButtonMinimizesWindow":
 						o.CloseButtonMinimizesWindow = ReadBoolean(xr);
+						break;
+					case "EscMinimizesToTray":
+						o.EscMinimizesToTray = ReadBoolean(xr);
 						break;
 					case "MinimizeToTray":
 						o.MinimizeToTray = ReadBoolean(xr);
@@ -365,8 +374,14 @@ namespace KeePass.Util.XmlSerialization
 					case "CopyUrlsInsteadOfOpening":
 						o.CopyUrlsInsteadOfOpening = ReadBoolean(xr);
 						break;
+					case "EntrySelGroupSel":
+						o.EntrySelGroupSel = ReadBoolean(xr);
+						break;
 					case "DisableSaveIfNotModified":
 						o.DisableSaveIfNotModified = ReadBoolean(xr);
+						break;
+					case "HideCloseDatabaseButton":
+						o.HideCloseDatabaseButton = ReadBoolean(xr);
 						break;
 					case "ToolBar":
 						o.ToolBar = ReadAceToolBar(xr);
@@ -388,6 +403,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "EntryListAlternatingBgColors":
 						o.EntryListAlternatingBgColors = ReadBoolean(xr);
+						break;
+					case "EntryListAlternatingBgColor":
+						o.EntryListAlternatingBgColor = ReadInt32(xr);
 						break;
 					case "EntryListShowDerefData":
 						o.EntryListShowDerefData = ReadBoolean(xr);
@@ -469,8 +487,8 @@ namespace KeePass.Util.XmlSerialization
 					case "ShowRecycleConfirmDialog":
 						o.ShowRecycleConfirmDialog = ReadBoolean(xr);
 						break;
-					case "UseCustomToolStripRenderer":
-						o.UseCustomToolStripRenderer = ReadBoolean(xr);
+					case "ToolStripRenderer":
+						o.ToolStripRenderer = ReadString(xr);
 						break;
 					case "OptimizeForScreenReader":
 						o.OptimizeForScreenReader = ReadBoolean(xr);
@@ -504,6 +522,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "KeyPromptFlags":
 						o.KeyPromptFlags = ReadUInt64(xr);
+						break;
+					case "ShowAdvAutoTypeCommands":
+						o.ShowAdvAutoTypeCommands = ReadBoolean(xr);
 						break;
 					case "SecureDesktopPlaySound":
 						o.SecureDesktopPlaySound = ReadBoolean(xr);
@@ -548,6 +569,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "MasterPassword":
 						o.MasterPassword = ReadAceMasterPassword(xr);
+						break;
+					case "MasterKeyTries":
+						o.MasterKeyTries = ReadInt32(xr);
 						break;
 					case "MasterKeyOnSecureDesktop":
 						o.MasterKeyOnSecureDesktop = ReadBoolean(xr);
@@ -758,6 +782,9 @@ namespace KeePass.Util.XmlSerialization
 					case "HotKeyEntryMenu":
 						o.HotKeyEntryMenu = ReadUInt64(xr);
 						break;
+					case "CheckHotKeys":
+						o.CheckHotKeys = ReadBoolean(xr);
+						break;
 					case "UrlOverride":
 						o.UrlOverride = ReadString(xr);
 						break;
@@ -784,6 +811,12 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "AutoTypeMatchByTagInTitle":
 						o.AutoTypeMatchByTagInTitle = ReadBoolean(xr);
+						break;
+					case "AutoTypeExpiredCanMatch":
+						o.AutoTypeExpiredCanMatch = ReadBoolean(xr);
+						break;
+					case "AutoTypeAlwaysShowSelDialog":
+						o.AutoTypeAlwaysShowSelDialog = ReadBoolean(xr);
 						break;
 					case "AutoTypePrependInitSequenceForIE":
 						o.AutoTypePrependInitSequenceForIE = ReadBoolean(xr);
@@ -814,6 +847,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "ProxyPort":
 						o.ProxyPort = ReadString(xr);
+						break;
+					case "ProxyAuthType":
+						o.ProxyAuthType = ReadProxyAuthType(xr);
 						break;
 					case "ProxyUserName":
 						o.ProxyUserName = ReadString(xr);
@@ -1024,6 +1060,9 @@ namespace KeePass.Util.XmlSerialization
 						break;
 					case "CredSaveMode":
 						o.CredSaveMode = ReadIOCredSaveMode(xr);
+						break;
+					case "PropertiesEx":
+						o.PropertiesEx = ReadString(xr);
 						break;
 					default:
 						Debug.Assert(false);
@@ -1271,10 +1310,10 @@ namespace KeePass.Util.XmlSerialization
 			return XmlConvert.ToInt32(strValue);
 		}
 
-		private static System.Single ReadSingle(XmlReader xr)
+		private static System.Double ReadDouble(XmlReader xr)
 		{
 			string strValue = xr.ReadElementString();
-			return XmlConvert.ToSingle(strValue);
+			return XmlConvert.ToDouble(strValue);
 		}
 
 		private static Dictionary<string, KeePass.App.Configuration.AceMainWindowLayout> m_dictAceMainWindowLayout = null;
@@ -1651,6 +1690,9 @@ namespace KeePass.Util.XmlSerialization
 				{
 					case "LockOnWindowMinimize":
 						o.LockOnWindowMinimize = ReadBoolean(xr);
+						break;
+					case "LockOnWindowMinimizeToTray":
+						o.LockOnWindowMinimizeToTray = ReadBoolean(xr);
 						break;
 					case "LockOnSessionSwitch":
 						o.LockOnSessionSwitch = ReadBoolean(xr);
@@ -2072,6 +2114,25 @@ namespace KeePass.Util.XmlSerialization
 			return eResult;
 		}
 
+		private static Dictionary<string, KeePassLib.ProxyAuthType> m_dictProxyAuthType = null;
+		private static KeePassLib.ProxyAuthType ReadProxyAuthType(XmlReader xr)
+		{
+			if(m_dictProxyAuthType == null)
+			{
+				m_dictProxyAuthType = new Dictionary<string, KeePassLib.ProxyAuthType>();
+				m_dictProxyAuthType["None"] = KeePassLib.ProxyAuthType.None;
+				m_dictProxyAuthType["Default"] = KeePassLib.ProxyAuthType.Default;
+				m_dictProxyAuthType["Manual"] = KeePassLib.ProxyAuthType.Manual;
+				m_dictProxyAuthType["Auto"] = KeePassLib.ProxyAuthType.Auto;
+			}
+
+			string strValue = xr.ReadElementString();
+			KeePassLib.ProxyAuthType eResult;
+			if(!m_dictProxyAuthType.TryGetValue(strValue, out eResult))
+				{ Debug.Assert(false); }
+			return eResult;
+		}
+
 		private static KeePass.App.Configuration.AceKvp ReadAceKvp(XmlReader xr)
 		{
 			KeePass.App.Configuration.AceKvp o = new KeePass.App.Configuration.AceKvp();
@@ -2360,6 +2421,12 @@ namespace KeePass.Util.XmlSerialization
 			return eResult;
 		}
 
+		private static System.Single ReadSingle(XmlReader xr)
+		{
+			string strValue = xr.ReadElementString();
+			return XmlConvert.ToSingle(strValue);
+		}
+
 		private static Dictionary<string, System.Drawing.GraphicsUnit> m_dictGraphicsUnit = null;
 		private static System.Drawing.GraphicsUnit ReadGraphicsUnit(XmlReader xr)
 		{
@@ -2467,6 +2534,9 @@ namespace KeePass.Util.XmlSerialization
 				{
 					case "DatabasePath":
 						o.DatabasePath = ReadString(xr);
+						break;
+					case "Password":
+						o.Password = ReadBoolean(xr);
 						break;
 					case "KeyFilePath":
 						o.KeyFilePath = ReadString(xr);
@@ -2709,6 +2779,7 @@ namespace KeePass.Util.XmlSerialization
 				m_dictAceColumnType["ExpiryTimeDateOnly"] = KeePass.App.Configuration.AceColumnType.ExpiryTimeDateOnly;
 				m_dictAceColumnType["Size"] = KeePass.App.Configuration.AceColumnType.Size;
 				m_dictAceColumnType["HistoryCount"] = KeePass.App.Configuration.AceColumnType.HistoryCount;
+				m_dictAceColumnType["AttachmentCount"] = KeePass.App.Configuration.AceColumnType.AttachmentCount;
 				m_dictAceColumnType["Count"] = KeePass.App.Configuration.AceColumnType.Count;
 			}
 

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -94,18 +94,18 @@ namespace KeePass.App.Configuration
 			set { m_bMax = value; }
 		}
 
-		private float m_fSplitterHorz = float.Epsilon;
-		public float SplitterHorizontalFrac
+		private double m_dSplitterHorz = double.Epsilon;
+		public double SplitterHorizontalFrac
 		{
-			get { return m_fSplitterHorz; }
-			set { m_fSplitterHorz = value; }
+			get { return m_dSplitterHorz; }
+			set { m_dSplitterHorz = value; }
 		}
 
-		private float m_fSplitterVert = float.Epsilon;
-		public float SplitterVerticalFrac
+		private double m_dSplitterVert = double.Epsilon;
+		public double SplitterVerticalFrac
 		{
-			get { return m_fSplitterVert; }
-			set { m_fSplitterVert = value; }
+			get { return m_dSplitterVert; }
+			set { m_dSplitterVert = value; }
 		}
 
 		private AceMainWindowLayout m_layout = AceMainWindowLayout.Default;
@@ -129,6 +129,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bCloseMin; }
 			set { m_bCloseMin = value; }
+		}
+
+		private bool m_bEscMin = false;
+		[DefaultValue(false)]
+		public bool EscMinimizesToTray
+		{
+			get { return m_bEscMin; }
+			set { m_bEscMin = value; }
 		}
 
 		private bool m_bMinToTray = false;
@@ -240,6 +248,14 @@ namespace KeePass.App.Configuration
 			set { m_bCopyUrls = value; }
 		}
 
+		private bool m_bEntrySelGroupSel = true;
+		[DefaultValue(true)]
+		public bool EntrySelGroupSel
+		{
+			get { return m_bEntrySelGroupSel; }
+			set { m_bEntrySelGroupSel = value; }
+		}
+
 		private bool m_bDisableSaveIfNotModified = false;
 		/// <summary>
 		/// Disable 'Save' button (instead of graying it out) if the database
@@ -250,6 +266,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bDisableSaveIfNotModified; }
 			set { m_bDisableSaveIfNotModified = value; }
+		}
+
+		private bool m_bHideCloseDbTb = true;
+		[DefaultValue(true)]
+		public bool HideCloseDatabaseButton
+		{
+			get { return m_bHideCloseDbTb; }
+			set { m_bHideCloseDbTb = value; }
 		}
 
 		private AceToolBar m_tb = new AceToolBar();
@@ -323,6 +347,14 @@ namespace KeePass.App.Configuration
 		{
 			get { return m_bAlternatingBgColor; }
 			set { m_bAlternatingBgColor = value; }
+		}
+
+		private int m_argbAltBgColor = 0;
+		[DefaultValue(0)]
+		public int EntryListAlternatingBgColor
+		{
+			get { return m_argbAltBgColor; }
+			set { m_argbAltBgColor = value; }
 		}
 
 		private bool m_bResolveFieldRefs = false;
@@ -495,6 +527,7 @@ namespace KeePass.App.Configuration
 		ExpiryTimeDateOnly,
 		Size,
 		HistoryCount,
+		AttachmentCount,
 
 		Count // Virtual identifier representing the number of types
 	}
@@ -582,8 +615,10 @@ namespace KeePass.App.Configuration
 				case AceColumnType.Tags: str = KPRes.Tags; break;
 				case AceColumnType.ExpiryTimeDateOnly: str = KPRes.ExpiryTimeDateOnly; break;
 				case AceColumnType.Size: str = KPRes.Size; break;
-				case AceColumnType.HistoryCount: str = KPRes.History + " (" +
-					KPRes.Count + ")"; break;
+				case AceColumnType.HistoryCount: str = KPRes.History +
+					" (" + KPRes.Count + ")"; break;
+				case AceColumnType.AttachmentCount: str = KPRes.Attachments +
+					" (" + KPRes.Count + ")"; break;
 				default: Debug.Assert(false); break;
 			};
 
@@ -605,7 +640,8 @@ namespace KeePass.App.Configuration
 
 		public static HorizontalAlignment GetTextAlign(AceColumnType t)
 		{
-			if((t == AceColumnType.Size) || (t == AceColumnType.HistoryCount))
+			if((t == AceColumnType.Size) || (t == AceColumnType.HistoryCount) ||
+				(t == AceColumnType.AttachmentCount))
 				return HorizontalAlignment.Right;
 
 			return HorizontalAlignment.Left;

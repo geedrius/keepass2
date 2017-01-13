@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -174,15 +174,17 @@ namespace KeePass.Forms
 			catch(Exception) { } // ScrollToCaret might throw (but still works)
 		}
 
-		private string BinaryDataToString()
+		private string BinaryDataToString(bool bReplaceNulls)
 		{
 			string strEnc = m_tscEncoding.Text;
 			StrEncodingInfo sei = StrUtil.GetEncoding(strEnc);
 
 			try
 			{
-				return (sei.Encoding.GetString(m_pbData, (int)m_uStartOffset,
+				string str = (sei.Encoding.GetString(m_pbData, (int)m_uStartOffset,
 					m_pbData.Length - (int)m_uStartOffset) ?? string.Empty);
+				if(bReplaceNulls) str = StrUtil.ReplaceNulls(str);
+				return str;
 			}
 			catch(Exception) { }
 
@@ -341,7 +343,7 @@ namespace KeePass.Forms
 					UpdateHexView();
 				else if(strViewer == m_strViewerText)
 				{
-					string strData = BinaryDataToString();
+					string strData = BinaryDataToString(true);
 					SetRtbData(strData, (m_bdc == BinaryDataClass.RichText), false);
 				}
 				else if(strViewer == m_strViewerImage)
@@ -351,7 +353,7 @@ namespace KeePass.Forms
 				}
 				else if(strViewer == m_strViewerWeb)
 				{
-					string strData = BinaryDataToString();
+					string strData = BinaryDataToString(false);
 					UIUtil.SetWebBrowserDocument(m_webBrowser, strData);
 				}
 			}
@@ -451,14 +453,7 @@ namespace KeePass.Forms
 			{
 				Image imgToDispose = m_imgResized;
 
-				Image img = new Bitmap(dx, dy, PixelFormat.Format32bppArgb);
-				using(Graphics g = Graphics.FromImage(img))
-				{
-					g.InterpolationMode = InterpolationMode.High;
-					g.SmoothingMode = SmoothingMode.HighQuality;
-					g.DrawImage(m_img, 0, 0, img.Width, img.Height);
-				}
-				m_imgResized = img;
+				m_imgResized = GfxUtil.ScaleImage(m_img, dx, dy);
 				m_picBox.Image = m_imgResized;
 
 				if(imgToDispose != null) imgToDispose.Dispose();
@@ -499,12 +494,12 @@ namespace KeePass.Forms
 		{
 			if(keyData == Keys.Escape)
 			{
-				if(msg.Msg == NativeMethods.WM_KEYDOWN)
+				bool? obKeyDown = NativeMethods.IsKeyDownMessage(ref msg);
+				if(obKeyDown.HasValue)
 				{
-					this.Close();
+					if(obKeyDown.Value) this.Close();
 					return true;
 				}
-				else if(msg.Msg == NativeMethods.WM_KEYUP) return true;
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);

@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -15,25 +14,9 @@
     <AssemblyOriginatorKeyFile>KeePass.pfx</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
+    <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -369,6 +352,7 @@
     </Compile>
     <Compile Include="App\AppDefs.cs" />
     <Compile Include="App\AppHelp.cs" />
+    <Compile Include="App\AppIcons.cs" />
     <Compile Include="App\AppPolicy.cs" />
     <Compile Include="App\Configuration\AceApplication.cs" />
     <Compile Include="App\Configuration\AceCustomConfig.cs" />
@@ -567,11 +551,11 @@
     <Compile Include="Forms\EntropyForm.Designer.cs">
       <DependentUpon>EntropyForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EntryListForm.cs">
+    <Compile Include="Forms\ListViewForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EntryListForm.Designer.cs">
-      <DependentUpon>EntryListForm.cs</DependentUpon>
+    <Compile Include="Forms\ListViewForm.Designer.cs">
+      <DependentUpon>ListViewForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\EntryReportForm.cs">
       <SubType>Form</SubType>
@@ -657,7 +641,9 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainForm_Events.cs" />
+    <Compile Include="Forms\MainForm_Events.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\MainForm_Functions.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -757,6 +743,12 @@
     <Compile Include="Forms\UrlOverridesForm.Designer.cs">
       <DependentUpon>UrlOverridesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\WebDocForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WebDocForm.Designer.cs">
+      <DependentUpon>WebDocForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\XmlReplaceForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -784,6 +776,9 @@
     </Compile>
     <Compile Include="UI\ColumnProvider.cs" />
     <Compile Include="UI\ColumnProviderPool.cs" />
+    <Compile Include="UI\CustomContextMenuEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\CustomContextMenuStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -829,6 +824,7 @@
     <Compile Include="UI\ProtectedDialog.cs" />
     <Compile Include="UI\PwInputControlGroup.cs" />
     <Compile Include="UI\RichTextBuilder.cs" />
+    <Compile Include="UI\RtlAwareResizeScope.cs" />
     <Compile Include="UI\SplitButtonEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -937,9 +933,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>EntropyForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EntryListForm.resx">
+    <EmbeddedResource Include="Forms\ListViewForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>EntryListForm.cs</DependentUpon>
+      <DependentUpon>ListViewForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EntryReportForm.resx">
       <DependentUpon>EntryReportForm.cs</DependentUpon>
@@ -1051,6 +1047,9 @@
     <EmbeddedResource Include="Forms\UrlOverridesForm.resx">
       <DependentUpon>UrlOverridesForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WebDocForm.resx">
+      <DependentUpon>WebDocForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\XmlReplaceForm.resx">
       <DependentUpon>XmlReplaceForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1126,6 +1125,7 @@
     <Compile Include="Util\Spr\SprEncoding.cs" />
     <Compile Include="Util\Spr\SprEngine.cs" />
     <Compile Include="Util\Spr\SprEngine.PickChars.cs" />
+    <Compile Include="Util\Spr\SprRefCache.cs" />
     <Compile Include="Util\Spr\SprSyntax.cs" />
     <Compile Include="Util\TempFilesPool.cs" />
     <Compile Include="Util\TextSimilarity.cs" />
@@ -1255,6 +1255,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="KeePass.ico" />
+    <None Include="Resources\Icons\KeePass.ico" />
+    <None Include="Resources\Icons\QuadNormal_Y.ico" />
+    <None Include="Resources\Icons\QuadNormal_R.ico" />
+    <None Include="Resources\Icons\QuadNormal_G.ico" />
+    <None Include="Resources\Icons\KeePass_Y.ico" />
+    <None Include="Resources\Icons\KeePass_R.ico" />
+    <None Include="Resources\Icons\KeePass_G.ico" />
     <None Include="Resources\Images\B16x16_Imp_Enpass.png" />
     <None Include="Resources\Images\B16x16_Imp_MSecure.png" />
     <None Include="Resources\Images\B16x16_Imp_PwSaver.png" />
@@ -1264,8 +1271,6 @@
     <None Include="Resources\Nuvola_Derived\B16x16_TextAlignRight.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_TextAlignLeft.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_TextAlignCenter.png" />
-    <None Include="Resources\Data\ImageArchive.bin" />
-    <None Include="Resources\Data\Images.bin" />
     <None Include="Resources\Data\Images_App_HighRes.bin" />
     <None Include="Resources\Data\Images_Client_16.bin" />
     <None Include="Resources\Data\Images_Client_HighRes.bin" />
@@ -1306,9 +1311,6 @@
     <None Include="Resources\Images\B16x16_Imp_KeePassX.png" />
     <None Include="Resources\Icons\LockOverlay.ico" />
     <None Include="Resources\Nuvola\B16x16_Redo.png" />
-    <None Include="Resources\Images\B16x16_TextAlignRight.png" />
-    <None Include="Resources\Images\B16x16_TextAlignLeft.png" />
-    <None Include="Resources\Images\B16x16_TextAlignCenter.png" />
     <None Include="Resources\Nuvola\B16x16_Color_Fill.png" />
     <None Include="Resources\Nuvola\B16x16_Colorize.png" />
     <None Include="Resources\Images\B16x16_FontStrikeout.png" />
@@ -1373,7 +1375,6 @@
     <None Include="Resources\Nuvola\B48x48_KGPG_Gen.png" />
     <None Include="Resources\Nuvola\B16x16_CompFile.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_FileSave_Disabled.png" />
-    <None Include="Resources\Images\KeePass.ico" />
     <None Include="Resources\Nuvola\B16x16_EditDelete.png" />
     <None Include="Resources\Nuvola\B48x48_Folder_Txt.png" />
     <None Include="Resources\Nuvola\B16x16_Laptop_Charge.png" />
@@ -1387,7 +1388,6 @@
     <None Include="Resources\Nuvola\B16x16_HTML.png" />
     <None Include="Resources\Nuvola\B48x48_FilePrint.png" />
     <None Include="Resources\Nuvola\B48x48_MessageBox_Info.png" />
-    <None Include="Resources\Nuvola\B16x16_Folder_Sent_Mail.png" />
     <None Include="Resources\Nuvola\B16x16_Folder_Txt.png" />
     <None Include="Resources\Nuvola\B48x48_Folder_Download.png" />
     <None Include="Resources\Nuvola\B16x16_EditCopy.png" />
@@ -1399,13 +1399,6 @@
     <None Include="Resources\Nuvola\B48x48_Font.png" />
     <None Include="Resources\Nuvola\B48x48_Source_Moc.png" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -1415,7 +1408,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_27A70973F3FC3787 /compiler:/delaysign-</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -12,7 +12,7 @@
     <AssemblyName>KeePass</AssemblyName>
     <ApplicationIcon>KeePass.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>KeePass.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>geedrius-keypair.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -643,9 +643,7 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainForm_Events.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\MainForm_Events.cs" />
     <Compile Include="Forms\MainForm_Functions.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1139,6 +1137,7 @@
     <Compile Include="Util\XmlUtil.XmlReplace.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="geedrius-keypair.snk" />
     <None Include="Resources\Nuvola\B16x16_1DownArrow.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1410,6 +1409,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_27A70973F3FC3787 /compiler:/delaysign-</PostBuildEvent>
+    <PostBuildEvent>"$(FrameworkSDKDir)bin\NETFX 4.6.2 Tools\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keyfile:"$(SolutionDir)..\geedrius-keypair.snk" /compiler:/delaysign-</PostBuildEvent>
   </PropertyGroup>
 </Project>

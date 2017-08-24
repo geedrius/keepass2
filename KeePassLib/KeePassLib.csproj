@@ -11,7 +11,7 @@
     <RootNamespace>KeePassLib</RootNamespace>
     <AssemblyName>KeePassLib</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>KeePassLib.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>geedrius-keypair.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -153,6 +153,7 @@
     <Compile Include="Utility\TimeUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="geedrius-keypair.snk" />
     <None Include="KeePassLib.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
